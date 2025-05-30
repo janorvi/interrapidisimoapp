@@ -60,8 +60,8 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideGetDatabaseSchemaApiClient(@Named("GeneralRetrofit") retrofit: Retrofit): GetDatabaseSchemaApiClient {
-        return retrofit.create(GetDatabaseSchemaApiClient::class.java)
+    fun provideGetTablesInfoApiClient(@Named("GeneralRetrofit") retrofit: Retrofit): GetTablesInfoApiClient {
+        return retrofit.create(GetTablesInfoApiClient::class.java)
     }
 
     @Singleton

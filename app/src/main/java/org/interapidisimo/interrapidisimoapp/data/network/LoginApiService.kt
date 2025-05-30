@@ -1,7 +1,6 @@
 package org.interapidisimo.interrapidisimoapp.data.network
 
-import org.interapidisimo.interrapidisimoapp.data.model.LoginRequestBody
-import org.interapidisimo.interrapidisimoapp.data.model.LoginResponse
+import org.interapidisimo.interrapidisimoapp.data.model.*
 import retrofit2.Response
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package org.interapidisimo.interrapidisimoapp.domain.useCases
+package org.interapidisimo.interrapidisimoapp.domain.useCases.network
 
 import org.interapidisimo.interrapidisimoapp.data.model.LoginRequestBody
 import org.interapidisimo.interrapidisimoapp.data.model.LoginResponse

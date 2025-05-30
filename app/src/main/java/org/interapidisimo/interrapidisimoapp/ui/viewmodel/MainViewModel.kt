@@ -7,18 +7,29 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.interapidisimo.interrapidisimoapp.data.model.*
-import org.interapidisimo.interrapidisimoapp.domain.useCases.GetCurrentVersionUseCase
-import org.interapidisimo.interrapidisimoapp.domain.useCases.GetDatabaseSchemaUseCase
-import org.interapidisimo.interrapidisimoapp.domain.useCases.GetLocalitiesUseCase
-import org.interapidisimo.interrapidisimoapp.domain.useCases.LoginUseCase
+import org.interapidisimo.interrapidisimoapp.domain.useCases.network.*
+import org.interapidisimo.interrapidisimoapp.domain.useCases.localities.*
+import org.interapidisimo.interrapidisimoapp.domain.useCases.tablesinfo.*
+import org.interapidisimo.interrapidisimoapp.domain.useCases.users.GetUsersCountUseCase
+import org.interapidisimo.interrapidisimoapp.domain.useCases.users.GetUsersFromDBUseCase
+import org.interapidisimo.interrapidisimoapp.domain.useCases.users.InsertUserUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val getLocalitiesCountUseCase: GetLocalitiesCountUseCase,
+    private val insertLocalityListUseCase: InsertLocalityListUseCase,
+    private val getLocalitiesFromDBUseCase: GetLocalitiesFromDBUseCase,
+    private val getTablesInfoCountUseCase: GetTablesInfoCountUseCase,
+    private val insertTableInfoListUseCase: InsertTableInfoListUseCase,
+    private val getTablesInfoFromDBUseCase: GetTablesInfoFromDBUseCase,
+    private val getUsersCountUseCase: GetUsersCountUseCase,
+    private val insertUserUseCase: InsertUserUseCase,
+    private val getUsersFromDBUseCase: GetUsersFromDBUseCase,
     private val getCurrentVersionUseCase: GetCurrentVersionUseCase,
     private val loginUseCase: LoginUseCase,
-    private val getDatabaseSchemaUseCase: GetDatabaseSchemaUseCase,
-    private val getLocalitiesUseCase: GetLocalitiesUseCase
+    private val getTablesInfoFromServerUseCase: GetTablesInfoFromServerUseCase,
+    private val getLocalitiesFromServerUseCase: GetLocalitiesFromServerUseCase
 ): ViewModel() {
 
     fun getCurrentVersion(){
@@ -47,19 +58,35 @@ class MainViewModel @Inject constructor(
     fun login(loginRequestBody: LoginRequestBody) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                val usersCount = getUsersCountUseCase()
                 val loginResponse: NetworkResult<LoginResponse> = loginUseCase(loginRequestBody)
                 when (loginResponse) {
                     is NetworkResult.ApiSuccess -> {
-                        val s = loginResponse.code
-                        val t = loginResponse.data
+                        if(usersCount == 0){
+                            insertUserUseCase(loginResponse.data)
+                        }
                     }
-                        //_cashPaymentResponse.postValue(paymentResponse.data)
 
-                    is NetworkResult.ApiError ->
+                    is NetworkResult.ApiError -> {
+                        if(usersCount != 0){
+                            getUsersFromDBUseCase()
+                        }else{
+                            Log.e("loginError", "No hay usuarios almacenados en la tabla")
+                        }
                         Log.e("loginError", loginResponse.message)
+                    }
 
-                    is NetworkResult.ApiException ->
+
+                    is NetworkResult.ApiException ->{
+                        if(usersCount != 0){
+                            val s = getUsersFromDBUseCase()
+                            val t = ""
+                        }else{
+                            Log.e("loginError", "No hay usuarios almacenados en la tabla")
+                        }
                         throw (loginResponse.e)
+                    }
+
                 }
             } catch (e: Exception) {
                 Log.e("loginException", e.stackTraceToString())
@@ -67,45 +94,71 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getDatabaseSchema(){
+    fun getTablesInfoFromServer(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val getDatabaseSchemaResponse: NetworkResult<List<TableInformationModel>> = getDatabaseSchemaUseCase()
-                when (getDatabaseSchemaResponse) {
+                val tablesInfoCount = getTablesInfoCountUseCase()
+                val getTablesInfoResponse: NetworkResult<List<TableInfoModel>> = getTablesInfoFromServerUseCase()
+                when (getTablesInfoResponse) {
                     is NetworkResult.ApiSuccess -> {
-                        val s = getDatabaseSchemaResponse.code
-                        val t = getDatabaseSchemaResponse.data
+                        if(tablesInfoCount == 0){
+                            insertTableInfoListUseCase(getTablesInfoResponse.data)
+                        }
                     }
-                    //_cashPaymentResponse.postValue(paymentResponse.data)
 
-                    is NetworkResult.ApiError ->
-                        Log.e("getDatabaseSchemaError", getDatabaseSchemaResponse.message)
+                    is NetworkResult.ApiError ->{
+                        if(tablesInfoCount != 0){
+                            getTablesInfoFromDBUseCase()
+                        }else{
+                            Log.e("getLocalitiesError", "No hay localidades almacenadas en la tabla")
+                        }
+                        Log.e("getTablesInfoError", getTablesInfoResponse.message)
+                    }
 
-                    is NetworkResult.ApiException ->
-                        throw (getDatabaseSchemaResponse.e)
+                    is NetworkResult.ApiException ->{
+                        if(tablesInfoCount != 0){
+                            getTablesInfoFromDBUseCase()
+                        }else{
+                            Log.e("getLocalitiesError", "No hay localidades almacenadas en la tabla")
+                        }
+                        throw (getTablesInfoResponse.e)
+                    }
                 }
             }catch (e: Exception){
-                Log.e("getDatabaseSchemaException", e.stackTraceToString())
+                Log.e("getTablesInfoException", e.stackTraceToString())
             }
         }
     }
 
-    fun getLocalities(){
+    fun getLocalitiesFromServer(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val getLocalitiesResponse: NetworkResult<List<LocalityModel>> = getLocalitiesUseCase()
+                val localitiesCount = getLocalitiesCountUseCase()
+                val getLocalitiesResponse: NetworkResult<List<LocalityModel>> = getLocalitiesFromServerUseCase()
                 when (getLocalitiesResponse) {
                     is NetworkResult.ApiSuccess -> {
-                        val s = getLocalitiesResponse.code
-                        val t = getLocalitiesResponse.data
+                        if(localitiesCount == 0){
+                            insertLocalityListUseCase(getLocalitiesResponse.data)
+                        }
                     }
-                    //_cashPaymentResponse.postValue(paymentResponse.data)
 
-                    is NetworkResult.ApiError ->
+                    is NetworkResult.ApiError ->{
+                        if(localitiesCount != 0){
+                            getLocalitiesFromDBUseCase()
+                        }else{
+                            Log.e("getLocalitiesError", "No hay localidades almacenadas en la tabla")
+                        }
                         Log.e("getLocalitiesError", getLocalitiesResponse.message)
+                    }
 
-                    is NetworkResult.ApiException ->
+                    is NetworkResult.ApiException -> {
+                        if(localitiesCount != 0){
+                            getLocalitiesFromDBUseCase()
+                        }else{
+                            Log.e("getLocalitiesError", "No hay localidades almacenadas en la tabla")
+                        }
                         throw (getLocalitiesResponse.e)
+                    }
                 }
             }catch (e: Exception){
                 Log.e("getLocalitiesException", e.stackTraceToString())

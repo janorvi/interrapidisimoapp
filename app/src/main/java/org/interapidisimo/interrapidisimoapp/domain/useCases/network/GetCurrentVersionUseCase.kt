@@ -1,4 +1,4 @@
-package org.interapidisimo.interrapidisimoapp.domain.useCases
+package org.interapidisimo.interrapidisimoapp.domain.useCases.network
 
 import org.interapidisimo.interrapidisimoapp.data.model.NetworkResult
 import org.interapidisimo.interrapidisimoapp.data.repository.MainRepository

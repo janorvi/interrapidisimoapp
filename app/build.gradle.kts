@@ -41,6 +41,7 @@ android {
 dependencies {
 
     val hilt_version = "2.48"
+    val room_version = "2.6.1"
 
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
@@ -69,4 +70,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") //convierte el array de json a un objeto
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
+    // Room
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
 }
