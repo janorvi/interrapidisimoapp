@@ -1,6 +1,8 @@
 package org.interapidisimo.interrapidisimoapp.ui.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +33,12 @@ class MainViewModel @Inject constructor(
     private val getTablesInfoFromServerUseCase: GetTablesInfoFromServerUseCase,
     private val getLocalitiesFromServerUseCase: GetLocalitiesFromServerUseCase
 ): ViewModel() {
+
+    private var _tableInfoList = MutableLiveData<List<TableInfoModel>>()
+    val tableInfoList: LiveData<List<TableInfoModel>> get() = _tableInfoList
+
+    private var _localityList = MutableLiveData<List<LocalityModel>>()
+    val localityList: LiveData<List<LocalityModel>> get() = _localityList
 
     fun getCurrentVersion(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -104,6 +112,7 @@ class MainViewModel @Inject constructor(
                         if(tablesInfoCount == 0){
                             insertTableInfoListUseCase(getTablesInfoResponse.data)
                         }
+                        _tableInfoList.postValue(getTablesInfoResponse.data)
                     }
 
                     is NetworkResult.ApiError ->{
@@ -140,6 +149,7 @@ class MainViewModel @Inject constructor(
                         if(localitiesCount == 0){
                             insertLocalityListUseCase(getLocalitiesResponse.data)
                         }
+                        _localityList.postValue(getLocalitiesResponse.data)
                     }
 
                     is NetworkResult.ApiError ->{
