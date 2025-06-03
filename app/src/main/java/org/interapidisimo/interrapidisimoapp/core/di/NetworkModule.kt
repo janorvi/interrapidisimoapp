@@ -10,6 +10,7 @@ import javax.inject.Singleton
 import org.interapidisimo.interrapidisimoapp.core.utils.*
 import org.interapidisimo.interrapidisimoapp.data.network.*
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 
 @Module
@@ -42,7 +43,9 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(ContentTypeInterceptor())
+            .connectTimeout(2, TimeUnit.SECONDS)     // Tiempo para conectar al servidor
+            .readTimeout(2, TimeUnit.SECONDS)        // Tiempo de espera para leer la respuesta
+            .writeTimeout(2, TimeUnit.SECONDS)
             .build()
     }
 

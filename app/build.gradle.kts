@@ -14,7 +14,7 @@ android {
         applicationId = "org.interapidisimo.interrapidisimoapp"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
+        versionCode = 99
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -43,8 +43,8 @@ dependencies {
     val hilt_version = "2.48"
     val room_version = "2.6.1"
 
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation(platform("androidx.compose:compose-bom:2024.04.01"))
     implementation("androidx.compose.ui:ui")
@@ -63,13 +63,14 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-compiler:$hilt_version")
     annotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     //RETROFIT
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.6.2")
     implementation("com.google.code.gson:gson:2.12.1") //transformar el json
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0") //convierte el array de json a un objeto
+    implementation("com.squareup.retrofit2:converter-gson:2.6.2") //convierte el array de json a un objeto
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.6.2")
 
     // Room
     implementation("androidx.room:room-ktx:$room_version")
